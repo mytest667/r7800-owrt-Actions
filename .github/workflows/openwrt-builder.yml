@@ -61,14 +61,17 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+
+    - name: del source code
+      run: |
+        cd openwrt && rm -f *
        
     - name: Load custom feeds
       run: |
-        cd openwrt && rm -f *
-        [ -e $NEWBUILD ] && mv $NEWBUILD openwrt/R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
-        [ -e $LUCI_PATH ] && mv $LUCI_PATH openwrt/R7800-owrt2512-r32680-17d625c858-20260221-1251-luci.patch
-        [ -e $OPENWRT_PATH ] && mv $OPENWRT_PATH openwrt/R7800-owrt2512-r32680-17d625c858-20260221-1251-openwrt.patch
-        [ -e $PACKAGES_PATH ] && mv $PACKAGES_PATHE openwrt/R7800-owrt2512-r32680-17d625c858-20260221-1251-packages.patch
+        [ -e $NEWBUILD ] && mv $NEWBUILD /openwrt
+        [ -e $LUCI_PATH ] && mv $LUCI_PATH /openwrt
+        [ -e $OPENWRT_PATH ] && mv $OPENWRT_PATH /openwrt
+        [ -e $PACKAGES_PATH ] && mv $PACKAGES_PATHE /openwrt
         
     - name: Install path
       run: |
