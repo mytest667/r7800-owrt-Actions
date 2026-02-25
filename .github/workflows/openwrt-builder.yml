@@ -22,6 +22,8 @@ on:
         default: 'true'
 
 env:
+  REPO_URL: https://github.com/mytest667/r7800-owrt.git
+  REPO_BRANCH: main
   NEWBUILD: R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
   LUCI_PATH: R7800-owrt2512-r32680-17d625c858-20260221-1251-luci.patch
   OPENWRT_PATH: R7800-owrt2512-r32680-17d625c858-20260221-1251-openwrt.patch
@@ -56,6 +58,13 @@ jobs:
     - name: Clone source code
       working-directory: /workdir
       run: |
+       df -hT $PWD
+       git clone $REPO_URL -b $REPO_BRANCH openwrt
+       ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+       
+    - name: Load custom feeds
+      run: |
+       cd openwrt && rm -f *
        [ -e $NEWBUILD ] && mv $NEWBUILD openwrt/R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
        [ -e $LUCI_PATH ] && mv $LUCI_PATH openwrt/R7800-owrt2512-r32680-17d625c858-20260221-1251-luci.patch
        [ -e $OPENWRT_PATH ] && mv $OPENWRT_PATH openwrt/R7800-owrt2512-r32680-17d625c858-20260221-1251-openwrt.patch
@@ -63,7 +72,7 @@ jobs:
         
     - name: Install path
       run: |
-       cd openwrt && ./owrt2512/R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
+       cd openwrt && ./R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
         
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@v1.0.0
