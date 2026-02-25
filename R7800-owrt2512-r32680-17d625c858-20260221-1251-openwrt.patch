@@ -1,0 +1,850 @@
+diff --git a/.config.init b/.config.init
+new file mode 100644
+index 0000000000..0b2094274e
+--- /dev/null
++++ b/.config.init
+@@ -0,0 +1,152 @@
++# Use "make defconfig" to expand this to a full .config
++CONFIG_TARGET_ipq806x=y
++CONFIG_TARGET_ipq806x_generic=y
++CONFIG_TARGET_ipq806x_generic_DEVICE_netgear_r7800=y
++
++# Per-package build logs in <buildroot>/logs
++CONFIG_DEVEL=y
++CONFIG_BUILD_LOG=y
++
++# Include package list in build
++CONFIG_INCLUDE_CONFIG=y
++
++# Debugging options (build gdbserver, include package debug)
++CONFIG_PACKAGE_gdbserver=y
++CONFIG_DEBUG=y
++
++# apk-openssl instead of apk-mbedtls
++CONFIG_PACKAGE_apk-openssl=y
++# CONFIG_PACKAGE_apk-mbedtls is not set
++
++# Busybox tweaks
++CONFIG_BUSYBOX_CUSTOM=y
++CONFIG_BUSYBOX_CONFIG_FEATURE_LESS_FLAGS=y
++CONFIG_BUSYBOX_CONFIG_FEATURE_LESS_REGEXP=y
++CONFIG_BUSYBOX_CONFIG_FEATURE_LESS_WINCH=y
++
++### Build also ath10k mainline .ipk
++### (disable this if you use the below section to fully switch to mainline)
++CONFIG_PACKAGE_kmod-ath10k=m
++
++## # Mainline ath10k wifi firmware and driver instead of -ct
++## CONFIG_PACKAGE_ath10k-firmware-qca9984=y
++## # CONFIG_PACKAGE_ath10k-firmware-qca9984-ct is not set
++## CONFIG_PACKAGE_kmod-ath10k=y
++## # CONFIG_PACKAGE_kmod-ath10k-ct is not set
++
++# Add-on programs
++CONFIG_PACKAGE_ccrypt=y
++CONFIG_PACKAGE_curl=y
++CONFIG_LIBCURL_OPENSSL=y
++CONFIG_PACKAGE_diffutils=y
++CONFIG_PACKAGE_htop=y
++CONFIG_PACKAGE_irqbalance=y
++CONFIG_PACKAGE_mtr-nojson=y
++CONFIG_PACKAGE_nano-full=y
++CONFIG_PACKAGE_patch=y
++CONFIG_PACKAGE_tcpdump-mini=y
++CONFIG_PACKAGE_tree=y
++CONFIG_PACKAGE_wget-ssl=y
++
++# USB device mount & file systems support
++CONFIG_PACKAGE_block-mount=y
++CONFIG_PACKAGE_kmod-usb-storage=y
++CONFIG_PACKAGE_kmod-fs-cifs=y
++CONFIG_PACKAGE_kmod-fs-exfat=y
++CONFIG_PACKAGE_libblkid=y
++CONFIG_PACKAGE_kmod-fs-ext4=y
++CONFIG_PACKAGE_kmod-fs-hfsplus=y
++CONFIG_PACKAGE_kmod-fs-msdos=y
++CONFIG_PACKAGE_kmod-fs-ntfs3=y
++CONFIG_PACKAGE_kmod-nls-cp1250=y
++CONFIG_PACKAGE_kmod-nls-cp437=y
++CONFIG_PACKAGE_kmod-nls-cp850=y
++CONFIG_PACKAGE_kmod-nls-iso8859-1=y
++CONFIG_PACKAGE_kmod-nls-iso8859-15=y
++CONFIG_PACKAGE_kmod-nls-utf8=y
++
++# IPv6 support
++CONFIG_PACKAGE_6in4=y
++CONFIG_PACKAGE_6to4=y
++CONFIG_PACKAGE_6rd=y
++
++# WLAN/WPS support
++CONFIG_PACKAGE_hostapd-utils=y
++#CONFIG_WPA_MSG_MIN_PRIORITY=2
++CONFIG_PACKAGE_wpad-openssl=y
++# CONFIG_PACKAGE_wpad-basic-mbedtls is not set
++# CONFIG_PACKAGE_libustream-mbedtls is not set
++
++# Luci (SSL from OpenSSL)
++CONFIG_PACKAGE_luci-ssl-openssl=y
++CONFIG_PACKAGE_luci-app-commands=y
++CONFIG_PACKAGE_luci-app-ddns=y
++CONFIG_PACKAGE_luci-app-package-manager=y
++CONFIG_PACKAGE_luci-app-sqm=y
++CONFIG_PACKAGE_luci-app-uhttpd=y
++CONFIG_PACKAGE_luci-app-upnp=y
++# CONFIG_LUCI_JSMIN is not set
++
++# Luci statistics
++CONFIG_PACKAGE_luci-app-statistics=y
++CONFIG_PACKAGE_collectd-mod-conntrack=y
++CONFIG_PACKAGE_collectd-mod-cpufreq=y
++CONFIG_PACKAGE_collectd-mod-dhcpleases=y
++CONFIG_PACKAGE_collectd-mod-entropy=y
++CONFIG_PACKAGE_collectd-mod-ping=y
++CONFIG_PACKAGE_collectd-mod-sqm=y
++CONFIG_PACKAGE_collectd-mod-thermal=y
++CONFIG_PACKAGE_collectd-mod-uptime=y
++
++# Build openwrt-2020 theme, default is still bootstrap
++CONFIG_PACKAGE_luci-theme-openwrt-2020=y
++
++# kernel support for tunnels, VPNs
++CONFIG_PACKAGE_kmod-tun=y
++CONFIG_PACKAGE_kmod-ovpn-dco-v2=y
++
++# wireguard and unetd (new wg-based mesh VPN)
++CONFIG_PACKAGE_luci-proto-wireguard=y
++CONFIG_PACKAGE_luci-proto-unet=y
++
++# PPTP support
++CONFIG_PACKAGE_luci-proto-ppp=y
++CONFIG_PACKAGE_ppp-mod-pptp=y
++
++# iptables add-on ipsec
++CONFIG_PACKAGE_iptables-mod-ipsec=y
++
++# Support for IETF BCP38
++CONFIG_PACKAGE_luci-app-bcp38=y
++
++# Support for Attended sysupgrade
++CONFIG_PACKAGE_luci-app-attendedsysupgrade=y
++
++# Adblock package with Luci support, initially disabled
++CONFIG_PACKAGE_luci-app-adblock=y
++
++# BanIP package with Luci support, initially disabled
++CONFIG_PACKAGE_luci-app-banip=y
++
++# nlbwmon app
++CONFIG_PACKAGE_luci-app-nlbwmon=y
++
++## Build and include qosify, if the LLVM toolchain has been downloaded and
++## tar extracted to the buildroot before the build config is started.
++## The file can be downloaded from buildbot snapshot target downloads.
++## https://downloads.openwrt.org/snapshots/targets/ipq806x/generic/llvm-bpf-21.1.6.Linux-x86_64.tar.zst
++##
++CONFIG_USE_LLVM_PREBUILT=y
++CONFIG_PACKAGE_qosify=y
++CONFIG_PACKAGE_kmod-sched-bpf=y
++
++# NFT support for iptables
++CONFIG_PACKAGE_iptables-nft=y
++CONFIG_PACKAGE_ip6tables-nft=y
++
++# ipset and kernel module
++CONFIG_PACKAGE_ipset=y
++
++# sftp server lib for newest scp in Ubuntu
++CONFIG_PACKAGE_openssh-sftp-server=y
++
+diff --git a/.gitignore b/.gitignore
+index ad04755919..19ff149ad8 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -13,7 +13,6 @@
+ /logs
+ /feeds
+ /feeds.conf
+-/files
+ /target/linux/feeds
+ /overlay
+ /package/feeds
+@@ -23,8 +22,6 @@
+ key-build*
+ private-key.pem
+ public-key.pem
+-*.orig
+-*.rej
+ *~
+ .#*
+ *#
+diff --git a/feeds.conf.default b/feeds.conf.default
+index c28e51d2b2..948259267a 100644
+--- a/feeds.conf.default
++++ b/feeds.conf.default
+@@ -1,5 +1,5 @@
+ src-git packages https://git.openwrt.org/feed/packages.git;openwrt-25.12
+ src-git luci https://git.openwrt.org/project/luci.git;openwrt-25.12
+ src-git routing https://git.openwrt.org/feed/routing.git;openwrt-25.12
+-src-git telephony https://git.openwrt.org/feed/telephony.git;openwrt-25.12
+-src-git video https://github.com/openwrt/video.git;openwrt-25.12
++#src-git telephony https://git.openwrt.org/feed/telephony.git;openwrt-25.12
++#src-git video https://github.com/openwrt/video.git;openwrt-25.12
+diff --git a/files/etc/Compile_info.txt b/files/etc/Compile_info.txt
+new file mode 100644
+index 0000000000..d592558ad3
+--- /dev/null
++++ b/files/etc/Compile_info.txt
+@@ -0,0 +1,6 @@
++OpenWrt 25.12-snapshot r32680-17d625c858 / 2026-02-21 12:17
++---
++openwrt   2026-02-20 17d625c ramips: remove obsolete SPI flash nodes a
++luci      2026-02-21 47bfe42 luci-app-banip: update 1.8.0-3
++packages  2026-02-21 639ccbb inadyn: remove package
++routing   2026-02-19 8cb082c mesh11sd: update to version 6.2.0
+diff --git a/files/etc/applyHNsettings.sh b/files/etc/applyHNsettings.sh
+new file mode 100755
+index 0000000000..d49760d772
+--- /dev/null
++++ b/files/etc/applyHNsettings.sh
+@@ -0,0 +1,11 @@
++#!/bin/sh
++cp -f $1 /tmp/HNsettings.cpt
++if [ "$?" -eq 0 ] ; then
++  ccdecrypt -vf /tmp/HNsettings.cpt
++  if [ "$?" -eq 0 ] ; then
++    tar -xzv -f /tmp/HNsettings -C /etc
++    chmod 744 /etc/dropbear/authorized_keys
++    sync
++  fi
++fi
++
+diff --git a/files/etc/checksettings.sh b/files/etc/checksettings.sh
+new file mode 100755
+index 0000000000..e7a1c42c19
+--- /dev/null
++++ b/files/etc/checksettings.sh
+@@ -0,0 +1,13 @@
++#!/bin/sh
++cd /etc/config
++for F in *
++do
++        echo
++        echo "===== $F ====="
++        uci -c /rom/etc/config export $F >/tmp/$F.default 2>/dev/null
++        case $? in 0) ;; *) echo '>> no default in /rom <<' ;; esac
++        uci export $F >/tmp/$F.current
++        diff -u /tmp/$F.default /tmp/$F.current
++        rm -f /tmp/$F.default /tmp/$F.current
++done
++
+diff --git a/files/etc/config/fstab b/files/etc/config/fstab
+new file mode 100644
+index 0000000000..4bc3fdc594
+--- /dev/null
++++ b/files/etc/config/fstab
+@@ -0,0 +1,11 @@
++config 'global'
++	option anon_swap  '0'
++	option anon_mount '1'
++	option auto_swap  '1'
++	option auto_mount '1'
++	option delay_root '0'
++	option check_fs   '0'
++
++## use 'block detect' to find out uuid, if you want device specific mount.
++## anon_mount enables the automatic mounting of /dev/sdXy to /mnt/sdXy
++
+diff --git a/files/etc/hotplug.d/ntp/20-ntpd-logger b/files/etc/hotplug.d/ntp/20-ntpd-logger
+new file mode 100644
+index 0000000000..7f1ff28f8b
+--- /dev/null
++++ b/files/etc/hotplug.d/ntp/20-ntpd-logger
+@@ -0,0 +1,4 @@
++#!/bin/sh
++[ $ACTION = "step" ]    && logger -t ntpd Time set, stratum=$stratum interval=$poll_interval offset=$offset
++[ $ACTION = "stratum" ] && logger -t ntpd Stratum change, stratum=$stratum interval=$poll_interval offset=$offset
++
+diff --git a/files/etc/lan-repeater.sh b/files/etc/lan-repeater.sh
+new file mode 100755
+index 0000000000..97533bb6a7
+--- /dev/null
++++ b/files/etc/lan-repeater.sh
+@@ -0,0 +1,28 @@
++#!/bin/sh
++uci set system.@system[0].hostname=router78
++uci set network.lan.ipaddr=192.168.1.78
++uci set network.lan.ip6ifaceid='::78'
++uci set network.lan.gateway=192.168.1.1
++uci set network.lan.dns=192.168.1.1
++uci set network.henet.auto=0
++uci set network.lan6=interface
++uci set network.lan6.ifname=@lan
++uci set network.lan6.proto=dhcpv6
++uci set network.lan6.reqprefix=no
++uci set wireless.@wifi-device[0].channel=52
++uci set wireless.@wifi-device[1].channel=11
++uci set dhcp.lan.ignore=1
++uci set dhcp.lan.force=0
++uci delete dhcp.lan.dhcpv6
++uci delete dhcp.lan.ra
++uci delete dhcp.lan.ndp
++uci set upnpd.config.enable_natpmp=0
++uci set upnpd.config.enable_upnp=0
++uci commit dhcp
++uci commit network
++uci commit wireless
++uci commit system
++uci commit upnpd
++/etc/init.d/dnsmasq disable
++/etc/init.d/miniupnpd disable
++
+diff --git a/files/etc/old-wifi-suite.sh b/files/etc/old-wifi-suite.sh
+new file mode 100755
+index 0000000000..3b002ec409
+--- /dev/null
++++ b/files/etc/old-wifi-suite.sh
+@@ -0,0 +1,36 @@
++#!/bin/sh
++
++echo "Associated wifi stations' AKM suites:"
++cd /var/run/hostapd
++for socket in *; do
++  [ -S "$socket" ] || continue
++  [ "$socket" = "global" ] && continue
++  for assoc in $(hostapd_cli -i "$socket" list_sta); do
++    suite=$(hostapd_cli -i "$socket" sta "$assoc" | grep "AKMSuiteSelector" | cut -f 2 -d"=")
++    case "$suite" in
++        00-0f-ac-1) akm=802.1x  ;;
++        00-0f-ac-2) akm=WPA-PSK  ;;
++        00-0f-ac-3) akm=FT-802.1x  ;;
++        00-0f-ac-4) akm=WPA-PSK-FT  ;;
++        00-0f-ac-5) akm=802.1x-SHA256  ;;
++        00-0f-ac-6) akm=WPA-PSK-SHA256  ;;
++        00-0f-ac-7) akm=TDLS  ;;
++        00-0f-ac-8) akm=WPA3-SAE  ;;
++        00-0f-ac-9) akm=FT-SAE  ;;
++        00-0f-ac-10) akm=AP-PEER-KEY  ;;
++        00-0f-ac-11) akm=802.1x-suite-B  ;;
++        00-0f-ac-12) akm=802.1x-suite-B-192  ;;
++        00-0f-ac-13) akm=FT-802.1x-SHA384  ;;
++        00-0f-ac-14) akm=FILS-SHA256  ;;
++        00-0f-ac-15) akm=FILS-SHA384  ;;
++        00-0f-ac-16) akm=FT-FILS-SHA256  ;;
++        00-0f-ac-17) akm=FT-FILS-SHA384  ;;
++        00-0f-ac-18) akm=OWE  ;;
++        00-0f-ac-19) akm=FT-WPA2-PSK-SHA384  ;;
++        00-0f-ac-20) akm=WPA2-PSK-SHA384  ;;
++        *) akm="undefined" ;;
++    esac
++    echo "$socket: AKM suite of $assoc is $suite ($akm)"
++  done
++done
++
+diff --git a/files/etc/profile.d/show-uptime.sh b/files/etc/profile.d/show-uptime.sh
+new file mode 100755
+index 0000000000..12403fb9ce
+--- /dev/null
++++ b/files/etc/profile.d/show-uptime.sh
+@@ -0,0 +1 @@
++uptime
+diff --git a/files/etc/saveHNsettings.sh b/files/etc/saveHNsettings.sh
+new file mode 100755
+index 0000000000..a6696cd51c
+--- /dev/null
++++ b/files/etc/saveHNsettings.sh
+@@ -0,0 +1,13 @@
++#!/bin/sh
++cd /etc
++tar -czv -f /tmp/HNsettings \
++  config/network config/wireless config/firewall config/dhcp config/sqm \
++  config/luci_statistics config/bcp38 sysupgrade.conf \
++  dropbear/authorized_keys adblock/adblock.whitelist crontabs/root
++if [ "$?" -eq 0 ] ; then
++  ccencrypt -vf /tmp/HNsettings
++  if [ "$?" -eq 0 ] ; then
++    cp -f /tmp/HNsettings.cpt /etc/HNsettings.$1.cpt
++  fi
++fi
++
+diff --git a/files/etc/wifi-suite.sh b/files/etc/wifi-suite.sh
+new file mode 100755
+index 0000000000..880a9788d5
+--- /dev/null
++++ b/files/etc/wifi-suite.sh
+@@ -0,0 +1,97 @@
++#!/bin/sh
++# Copyright 2021-2023 Hannu Nyman
++# Modified 2026-02-08 - Re-integrated full cipher list and robust SSID fix
++# SPDX-License-Identifier: GPL-2.0-only
++
++if [ ! -d "/var/run/hostapd" ]; then
++    echo "Error: /var/run/hostapd directory not found. Is hostapd running?"
++    exit 1
++fi
++
++if ! command -v hostapd_cli >/dev/null 2>&1; then
++    echo "Error: hostapd_cli command not found."
++    exit 1
++fi
++
++echo "STATION DETAILS BY INTERFACE (v7)"
++
++cd /var/run/hostapd || exit 1
++
++for socket in *; do
++    [ -S "$socket" ] || continue
++    [ "$socket" = "global" ] && continue
++
++    # SSID-Extraktion
++    ssid=$(hostapd_cli -i "$socket" get_config 2>/dev/null | grep "^ssid=" | cut -d'=' -f2-)
++
++    # Frequency - Fallback-SSID
++    if_status=$(hostapd_cli -i "$socket" status)
++    [ -z "$ssid" ] && ssid=$(echo "$if_status" | sed -n 's/^ssid=//p' | head -n1)
++    freq=$(echo "$if_status" | sed -n 's/^freq=//p' | head -n1)
++
++    printf "\nIF: %s | SSID: %s | Freq: %sMHz\n" "$socket" "$ssid" "${freq:-unknown}"
++
++    # Connected stations
++    stations=$(hostapd_cli -i "$socket" list_sta)
++    if [ -z "$stations" ]; then
++        echo "  (No stations connected)"
++        continue
++    fi
++
++    for assoc in $stations; do
++        sta_info=$(hostapd_cli -i "$socket" sta "$assoc")
++
++        # Raw data
++        suite=$(echo "$sta_info" | grep "AKMSuiteSelector" | cut -f 2 -d"=")
++        wpa_ver=$(echo "$sta_info" | grep "^wpa=" | cut -f 2 -d"=")
++        cipher_hex=$(echo "$sta_info" | grep "dot11RSNAStatsSelectedPairwiseCipher" | cut -f 2 -d"=")
++
++        # 1. WLAN-Generation
++        if echo "$sta_info" | grep -qiE "EHT-CAP|EHT_CAP"; then bw="Wi-Fi 7"
++        elif echo "$sta_info" | grep -qiE "HE-CAP|HE_CAP"; then bw="Wi-Fi 6"
++        elif echo "$sta_info" | grep -qiE "VHT-CAP|VHT_CAP"; then bw="Wi-Fi 5"
++        elif echo "$sta_info" | grep -qiE "HT-CAP|HT_CAP"; then bw="Wi-Fi 4"
++        else bw="Legacy"; fi
++
++        # 2. Protokol
++        case "$suite" in
++            00-0f-ac-8|00-0f-ac-9|00-0f-ac-11|00-0f-ac-12|00-0f-ac-13|00-0f-ac-14|00-0f-ac-15|00-0f-ac-16|00-0f-ac-17|00-0f-ac-18|00-0f-ac-19|00-0f-ac-20) 
++                wpa_proto="WPA3" ;;
++            *) [ "$wpa_ver" = "2" ] && wpa_proto="WPA2" || wpa_proto="WPA/Leg" ;;
++        esac
++
++        # 3. AKM
++        case "$suite" in
++            00-0f-ac-1) akm="802.1x" ;;
++            00-0f-ac-2) akm="PSK" ;;
++            00-0f-ac-3) akm="802.1x-FT" ;;
++            00-0f-ac-4) akm="PSK-FT" ;;
++            00-0f-ac-5) akm="802.1x-SHA256" ;;
++            00-0f-ac-6) akm="PSK-SHA256" ;;
++            00-0f-ac-8) akm="SAE" ;;
++            00-0f-ac-9) akm="SAE-FT" ;;
++            00-0f-ac-11) akm="OWE" ;;
++            00-0f-ac-18) akm="OWE" ;;
++            *) akm="Other" ;;
++        esac
++
++        # 4. Cipher
++        case "$cipher_hex" in
++            00-0f-ac-1) cipher="WEP40" ;;
++            00-0f-ac-2) cipher="TKIP" ;;
++            00-0f-ac-4) cipher="CCMP-128 (AES)" ;;
++            00-0f-ac-5) cipher="WEP104" ;;
++            00-0f-ac-6) cipher="CMAC" ;;
++            00-0f-ac-8) cipher="GCMP-128" ;;
++            00-0f-ac-9) cipher="GCMP-256" ;;
++            00-0f-ac-b) cipher="GMAC-128" ;;
++            00-0f-ac-c) cipher="GMAC-256" ;;
++            00-0f-ac-10) cipher="CCMP-256" ;;
++            *) cipher="$cipher_hex Unknown" ;;
++        esac
++
++        printf "  STA: %-18s | %-8s | %-4s %-8s | Cipher: %-10s\n" \
++               "$assoc" "$bw" "$wpa_proto" "$akm" "$cipher"
++    done
++done
++
+diff --git a/hnscripts/createbuildinfo.sh b/hnscripts/createbuildinfo.sh
+new file mode 100755
+index 0000000000..d6a046d7f8
+--- /dev/null
++++ b/hnscripts/createbuildinfo.sh
+@@ -0,0 +1,64 @@
++#!/bin/sh
++#
++# createbuildinfo  -  Create info on current config and source code changes
++
++getGitInfo() {
++#params: directory patchfile infofile
++ echo "\n######################################################\n" >> $3
++ (cd $1
++  git diff HEAD > $2
++  git remote -v show | grep fetch >> $3
++  git branch --list >> $3
++  git show --format="%cd %h %s" --abbrev=7 --date=short | head -n 1 | cut -b1-60 >> $3
++  git status --porcelain >> $3
++ )
++}
++
++BinDir=$PWD/bin/targets/ipq806x/generic
++Device=R7800
++Prefix=openwrt-ipq806x-generic-netgear_r7800
++Branch=owrt2512
++
++VersTime=$Branch-$(scripts/getver.sh)-$(date +%Y%m%d-%H%M)
++TFile=$BinDir/$Device-$VersTime
++
++echo process $Branch...
++
++# cleanup old binaries & patches
++rm -f $BinDir/$Device-* $BinDir/ath10k-*
++
++# remove unnecessary files
++rm -f $BinDir/*root.img $BinDir/*vmlinux.elf $BinDir/*initramfs-uImage
++
++# create status info and patches
++echo "$VersTime" > $TFile-status.txt
++getGitInfo . $TFile-openwrt.patch $TFile-status.txt
++getGitInfo feeds/luci $TFile-luci.patch $TFile-status.txt
++getGitInfo feeds/packages $TFile-packages.patch $TFile-status.txt
++#getGitInfo feeds/routing $TFile-routing.patch $TFile-status.txt
++sed -i -e 's/$/\r/' $TFile-status.txt
++
++# collect config info
++cp .config $TFile.config
++cp .config.init $TFile.config.init
++scripts/diffconfig.sh > $TFile.diffconfig.txt 2>/dev/null
++
++# copy buildroot creation script and patch timestamp info
++cp hnscripts/newBuildroot.sh $TFile-newBuildroot.sh
++sed -i "s/^FILESTAMP=.*/FILESTAMP=$Device-$VersTime/" $TFile-newBuildroot.sh
++
++# cleanup checksum files
++grep -sh $Prefix.*-squashfs $BinDir/md5sums $BinDir/sha256sums \
++  | sed -e 's/$/\r/' -e 's/\*'$Prefix'/'$Device'/' -e 's/squashfs-//' \
++  > $TFile-checksums.txt
++rm -f $BinDir/md5sums $BinDir/sha256sums
++
++# rename manifest and firmware files
++cd $BinDir
++mv *.manifest $Device-$VersTime-manifest.txt
++mv $Prefix-squashfs-sysupgrade.bin $Device-$VersTime-sysupgrade.bin
++mv $Prefix-squashfs-factory.img $Device-$VersTime-factory.img
++
++# copy ath10k ct+mainline kmods
++cp packages/kmod-ath10k-6* ath10k-mainline-$VersTime.apk
++cp packages/kmod-ath10k-ct-6* ath10k-ct-$VersTime.apk
+diff --git a/hnscripts/kernelcompile.sh b/hnscripts/kernelcompile.sh
+new file mode 100755
+index 0000000000..8bf93a3a53
+--- /dev/null
++++ b/hnscripts/kernelcompile.sh
+@@ -0,0 +1,9 @@
++#!/bin/bash
++#
++# kernelcompile  -  Clean & compile kernel using a single thread. No update.
++
++echo "...make kernel..."
++make target/linux/clean
++mkdir -p logs
++make target/linux/compile V=s 2>&1 | tee logs/build.log | grep -i -E "^make.*(error|[12345]...Entering dir)"
++
+diff --git a/hnscripts/mountNcopy.sh b/hnscripts/mountNcopy.sh
+new file mode 100755
+index 0000000000..e64ecc89fd
+--- /dev/null
++++ b/hnscripts/mountNcopy.sh
+@@ -0,0 +1,34 @@
++#!/bin/sh
++#
++# mount & copy  -  Mount the Virtualbox shared folder and copy files to PC
++
++Mounttype=vboxsf
++Mountname=PCSHARE
++Mountpoint=/media/windows-share
++BinDir=bin/targets/ipq806x/generic
++
++echo Check for existing mount of the shared folder $Mountpoint
++df | grep $Mountpoint
++if [ "$?" -ne 0 ]; then
++  echo Mounting $Mountpoint as $Mountname...
++  sudo mount -t $Mounttype $Mountname $Mountpoint
++  [ "$?" -ne 0 ] && echo "Sudo/mount failed." && exit 1
++fi
++
++echo "\nCopy from $PWD ..."
++cp $BinDir/*bin $Mountpoint
++sleep 2
++cp $BinDir/*img $Mountpoint
++sleep 2
++cp $BinDir/ath10k* $Mountpoint
++sleep 1
++cp $BinDir/*patch $Mountpoint
++sleep 1
++cp $BinDir/*sh $Mountpoint
++sleep 1
++cp $BinDir/*txt $Mountpoint
++sleep 1
++cp $BinDir/*config.init $Mountpoint
++cp $BinDir/*config $Mountpoint
++echo done.
++
+diff --git a/hnscripts/newBuildroot.sh b/hnscripts/newBuildroot.sh
+new file mode 100755
+index 0000000000..a421f322a5
+--- /dev/null
++++ b/hnscripts/newBuildroot.sh
+@@ -0,0 +1,75 @@
++#!/bin/sh
++#
++# newBuildroot.sh
++#
++# Creates the build environment with the current directory as the root
++# To avoid problems with long paths, something like /Openwrt is preferable
++#
++# Script creates subdir for the main branch (or a release branch), and dl for downloads
++# Creates OpenWrt source repository and luci and packages feeds (routing and telephony disabled)
++
++### Target definitions
++TARGET=owrt2512
++GITREPO="-b openwrt-25.12 --single-branch https://git.openwrt.org/openwrt/openwrt.git"
++
++## Current version
++FILESTAMP=R7800-owrt2512-r32580-82fec218e1-20260210-2143
++
++### Prerequisites for buildroot for the current Ubuntu
++sudo apt-get install build-essential libncurses5-dev zlib1g-dev
++sudo apt-get install gawk gcc-multilib flex git gettext libssl-dev
++sudo apt-get install python3-setuptools swig
++sudo apt-get install python3-distutils
++
++### Prerequisites for being able to send patches to openwrt-devel
++sudo apt-get install git-email
++
++### Newly patched Ubuntu may not yet have the correct kernel headers.
++# sudo apt-get install linux-headers-$(uname -r)
++
++### set the preferred umask (allowed: 0000-0022)
++umask 0022
++
++### download directory (outside buildroot directory to protect from make distclean)
++mkdir -p dl
++
++### buildroot directory
++mkdir -p $TARGET
++
++### checkout/clone and change to directory
++git clone $GITREPO $TARGET
++cd $TARGET
++
++### create symlink to dl (after git clone)
++ln -s ../dl dl
++
++### patch OpenWrt source first to set feeds correctly
++### update the feeds, apply patches to feeds
++### re-create index to find new packages, finally install
++patch -p1 -i ../$FILESTAMP-openwrt.patch
++scripts/feeds update -a
++(cd feeds/luci;     patch -p1 -i ../../../$FILESTAMP-luci.patch)
++(cd feeds/packages; patch -p1 -i ../../../$FILESTAMP-packages.patch)
++#(cd feeds/routing;  patch -p1 -i ../../../$FILESTAMP-routing.patch)
++scripts/feeds update -i
++scripts/feeds install -a
++
++### chmod known script files executable
++chmod -f 755 files/etc/*.sh
++chmod -f 755 files/etc/rc.button/*
++
++### chmod buildscripts executable
++chmod -f 755 hnscripts/*.sh
++
++### add created/modified files in OpenWrt repo to version control
++git add -f files
++git add -A
++
++### add created/modified files in feeds to version control
++(cd feeds/luci;     git add -A)
++(cd feeds/packages; git add -A)
++#(cd feeds/routing;  git add -A)
++
++### initialise .config
++cp .config.init .config
++
+diff --git a/hnscripts/parallelcompile.sh b/hnscripts/parallelcompile.sh
+new file mode 100755
+index 0000000000..6f83b9d9bc
+--- /dev/null
++++ b/hnscripts/parallelcompile.sh
+@@ -0,0 +1,14 @@
++#!/bin/bash
++#
++# parallelcompile  -  Compile using multiple threads
++
++echo "...create version info file..."
++hnscripts/timestampVersion.sh
++echo "...make world..."
++mkdir -p logs
++make -j 5 V=s 2>&1 | tee logs/build.log | grep -i -E "^make.*(error|[12345]...Entering dir|[123]...Leaving)|^warning"
++[ ${PIPESTATUS[0]} -ne 0 ] && exit 1
++echo -n "...create build info: "
++hnscripts/createbuildinfo.sh
++echo done.
++
+diff --git a/hnscripts/singlecompile.sh b/hnscripts/singlecompile.sh
+new file mode 100755
+index 0000000000..ac05bd6434
+--- /dev/null
++++ b/hnscripts/singlecompile.sh
+@@ -0,0 +1,14 @@
++#!/bin/bash
++#
++# singlecompile  -  Compile using a single thread. For debug
++
++echo "...create version info file..."
++hnscripts/timestampVersion.sh
++echo "...make world..."
++mkdir -p logs
++make V=s 2>&1 | tee logs/build.log | grep -i -E "^make.*(error|[12345]...Entering dir)|^warning"
++[ ${PIPESTATUS[0]} -ne 0 ] && exit 1
++echo -n "...create build info: "
++hnscripts/createbuildinfo.sh
++echo done.
++
+diff --git a/hnscripts/timestampVersion.sh b/hnscripts/timestampVersion.sh
+new file mode 100755
+index 0000000000..6ace7e5184
+--- /dev/null
++++ b/hnscripts/timestampVersion.sh
+@@ -0,0 +1,19 @@
++#!/bin/bash
++#
++# timestampVersion  -  Collect source version info and insert it into firmware
++
++STATUSFILE=files/etc/Compile_info.txt
++Nickname=25.12-snapshot
++
++echo OpenWrt $Nickname `scripts/getver.sh` / `date "+%F %H:%M"` > $STATUSFILE
++echo "---" >> $STATUSFILE
++echo "openwrt   $(git log -1 --format="%cd %h %s" --abbrev=7 --date=short | head -n 1 | cut -b1-60)" >> $STATUSFILE
++echo "luci      $(cd feeds/luci && git log -1 --format="%cd %h %s" --abbrev=7 --date=short | cut -b1-60)" >> $STATUSFILE
++echo "packages  $(cd feeds/packages && git log -1 --format="%cd %h %s" --abbrev=7 --date=short | cut -b1-60)" >> $STATUSFILE
++echo "routing   $(cd feeds/routing && git log -1 --format="%cd %h %s" --abbrev=7 --date=short | cut -b1-60)" >> $STATUSFILE
++cat $STATUSFILE
++git add $STATUSFILE
++
++# Override git/svn timestamp, set initial clock to now
++date +%s > version.date
++
+diff --git a/hnscripts/updateNmake.sh b/hnscripts/updateNmake.sh
+new file mode 100755
+index 0000000000..b877af5de4
+--- /dev/null
++++ b/hnscripts/updateNmake.sh
+@@ -0,0 +1,20 @@
++#!/bin/bash
++#
++# update & make  -  Update source code and continue to make the build
++
++umask 0022
++echo "...update OpenWrt source..."
++git pull
++[ "$?" -ne 0 ] && echo "Updating the OpenWrt source code failed." && exit 1
++echo "...update feeds..."
++./scripts/feeds update -a
++[ "$?" -ne 0 ] && echo "Updating the feeds failed." && exit 1
++echo "...install feeds..."
++./scripts/feeds install -a
++echo "...make defconfig..."
++make defconfig
++echo "...download new source packages..."
++make -j 3 download
++echo "...make the firmware..."
++hnscripts/parallelcompile.sh
++
+diff --git a/package/base-files/files/bin/config_generate b/package/base-files/files/bin/config_generate
+index 18fae054d4..e621a88d4c 100755
+--- a/package/base-files/files/bin/config_generate
++++ b/package/base-files/files/bin/config_generate
+@@ -314,10 +314,10 @@ generate_static_system() {
+ 		delete system.@system[0]
+ 		add system system
+ 		set system.@system[-1].hostname='OpenWrt'
+-		set system.@system[-1].timezone='GMT0'
+-		set system.@system[-1].zonename='UTC'
++		set system.@system[-1].timezone='EET-2EEST,M3.5.0/3,M10.5.0/4'
++		set system.@system[-1].zonename='Europe/Helsinki'
+ 		set system.@system[-1].ttylogin='0'
+-		set system.@system[-1].log_size='128'
++		set system.@system[-1].log_size='192'
+ 		set system.@system[-1].urandom_seed='0'
+ 
+ 		delete system.ntp
+diff --git a/package/base-files/files/etc/rc.button/reset b/package/base-files/files/etc/rc.button/reset
+index 8465133471..6f30c6ed84 100755
+--- a/package/base-files/files/etc/rc.button/reset
++++ b/package/base-files/files/etc/rc.button/reset
+@@ -15,16 +15,8 @@ timeout)
+ 	set_state failsafe
+ ;;
+ released)
+-	if [ "$SEEN" -lt 1 ]
+-	then
+-		echo "REBOOT" > /dev/console
+-		sync
+-		reboot
+-	elif [ "$SEEN" -ge 5 -a -n "$OVERLAY" ]
+-	then
+ 		echo "FACTORY RESET" > /dev/console
+ 		factoryreset -y && reboot &
+-	fi
+ ;;
+ esac
+ 
+diff --git a/package/network/config/qosify/files/qosify.conf b/package/network/config/qosify/files/qosify.conf
+index 7a3d0d068a..31abfb7274 100644
+--- a/package/network/config/qosify/files/qosify.conf
++++ b/package/network/config/qosify/files/qosify.conf
+@@ -27,8 +27,8 @@ config class voice
+ config interface wan
+ 	option name wan
+ 	option disabled 1
+-	option bandwidth_up 100mbit
+-	option bandwidth_down 100mbit
++	option bandwidth_up 55mbit
++	option bandwidth_down 190mbit
+ 	option overhead_type none
+ 	# defaults:
+ 	option ingress 1
+diff --git a/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh b/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh
+index 81ebebbe2b..43ed45ae31 100644
+--- a/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh
++++ b/package/network/config/wifi-scripts/files/lib/netifd/hostapd.sh
+@@ -823,6 +823,11 @@ hostapd_set_bss_options() {
+ 		set_default wps_manufacturer "www.openwrt.org"
+ 		set_default wps_independent 1
+ 
++		# Set WPS label pin to original Netgear value stored in art partition
++		# Value for wps_pin can be overridden by /etc/config/wireless
++		local PINdefault="$(dd if=/dev/mtdblock3 bs=1 skip=18 count=8 2>/dev/null)"
++		set_default wps_pin "$PINdefault"
++
+ 		wps_state=2
+ 		[ -n "$wps_not_configured" ] && wps_state=1
+ 
+diff --git a/package/network/services/odhcpd/files/odhcpd-update b/package/network/services/odhcpd/files/odhcpd-update
+index e777fcbb07..7c5ce5b8d4 100755
+--- a/package/network/services/odhcpd/files/odhcpd-update
++++ b/package/network/services/odhcpd/files/odhcpd-update
+@@ -2,6 +2,7 @@
+ # Make dnsmasq reread hostfile by sending SIGHUP signal
+ 
+ initscript=$0
++logger -t odhcpd "*** ODHCPD triggers DNSMASQ reload ***"
+ 
+ . /lib/functions/procd.sh
+ 
