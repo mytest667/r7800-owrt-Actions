@@ -65,6 +65,7 @@ jobs:
     - name: Load custom feeds
       run: |
        cd openwrt && rm -f *
+       [ -e files ] && mv files openwrt/files
        [ -e $NEWBUILD ] && mv $NEWBUILD openwrt/R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
        [ -e $LUCI_PATH ] && mv $LUCI_PATH openwrt/R7800-owrt2512-r32680-17d625c858-20260221-1251-luci.patch
        [ -e $OPENWRT_PATH ] && mv $OPENWRT_PATH openwrt/R7800-owrt2512-r32680-17d625c858-20260221-1251-openwrt.patch
