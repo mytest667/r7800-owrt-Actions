@@ -68,7 +68,7 @@ jobs:
     - name: Download package
       id: package
       run: |
-        cd /openwrt/owrt2512
+        cd openwrt && cd owrt2512
         make defconfig
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
