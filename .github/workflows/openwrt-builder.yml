@@ -22,8 +22,6 @@ on:
         default: 'true'
 
 env:
-  REPO_URL: https://github.com/mytest667/r7800-owrt.git
-  REPO_BRANCH: main
   NEWBUILD: R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
   LUCI_PATH: R7800-owrt2512-r32680-17d625c858-20260221-1251-luci.patch
   OPENWRT_PATH: R7800-owrt2512-r32680-17d625c858-20260221-1251-openwrt.patch
