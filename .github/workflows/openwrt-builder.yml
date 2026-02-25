@@ -65,17 +65,10 @@ jobs:
     - name: del source code
       run: |
         cd openwrt && rm -f *
-       
-    - name: Load custom feeds
-      run: |
-        [ -e $NEWBUILD ] && mv $NEWBUILD /openwrt
-        [ -e $LUCI_PATH ] && mv $LUCI_PATH /openwrt
-        [ -e $OPENWRT_PATH ] && mv $OPENWRT_PATH /openwrt
-        [ -e $PACKAGES_PATH ] && mv $PACKAGES_PATHE /openwrt
-        
+     
     - name: Install path
       run: |
-        cd openwrt && ./R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
+        ./R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
         
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@v1.0.0
@@ -87,7 +80,7 @@ jobs:
     - name: Download package
       id: package
       run: |
-        cd openwrt && cd owrt2512
+        cd owrt2512
         make defconfig
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
@@ -96,7 +89,7 @@ jobs:
     - name: Compile the firmware
       id: compile
       run: |
-        cd openwrt && cd owrt2512
+        cd owrt2512
         echo -e "$(nproc) thread compile"
         hnscripts/updateNmake.sh
         echo "status=success" >> $GITHUB_OUTPUT
