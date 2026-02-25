@@ -19,19 +19,11 @@ on:
       ssh:
         description: 'SSH connection to Actions'
         required: false
-        default: 'false'
+        default: 'true'
 
 env:
-  REPO_URL: https://github.com/mytest667/openwrt-R7800.git
+  REPO_URL: https://github.com/mytest667/r7800-owrt.git
   REPO_BRANCH: main
-  FEEDS_CONF: feeds.conf.default
-  TOR_MANAGER: luci-app-tormanager.tar.xz
-  CONFIG_FILE: .config
-  BASE_FILE: base.po
-  LUCI_MOD: luci-mod-network.json
-  LUCI_JS: wireless.js
-  DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
@@ -65,49 +57,7 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-
-    - name: Load custom feeds
-      run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P1_SH
-
-    - name: Update feeds
-      run: |
-        cd openwrt && ./scripts/feeds update -a
-        
-    - name: Install feeds
-      run: |
-        cd openwrt
-        ./scripts/feeds install -a
-
-    - name: Load Tor_manager
-      run: |
-        [ -e files ] && mv files openwrt/files
-        [ -e $TOR_MANAGER ] && tar -xvf $TOR_MANAGER -C openwrt/feeds/luci/applications/         
-        chmod +x $DIY_P2_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P2_SH
-        
-    - name: reInstall feeds
-      run: |
-        cd openwrt
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
-
-    - name: Load custom configuration
-      run: |
-        [ -e files ] && mv files openwrt/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        [ -e $BASE_FILE ] && mv $BASE_FILE openwrt/feeds/luci/modules/luci-base/po/zh_Hans/base.po
-        [ -e $LUCI_MOD ] && mv $LUCI_MOD openwrt/feeds/luci/modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json
-        [ -e $LUCI_JS ] && mv $LUCI_JS openwrt/feeds/luci/modules/luci-mod-network/htdocs/luci-static/resources/view/wireless.js
-        chmod +x $DIY_P2_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P2_SH
-        
-        
+    
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@v1.0.0
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
