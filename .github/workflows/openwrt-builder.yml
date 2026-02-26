@@ -97,7 +97,7 @@ jobs:
     - name: copy logs
       id: logs
       run: |
-        copy owrt2512/logs/* owrt2512/bin/targets/*/*
+        cp -r owrt2512/logs owrt2512/bin/targets/*/*
 
     - name: Upload bin directory
       uses: actions/upload-artifact@main
