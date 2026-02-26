@@ -761,7 +761,6 @@ index 0000000000..b877af5de4
 +echo "...install feeds..."
 +./scripts/feeds install -a
 +echo "...make defconfig..."
-+make defconfig
 +echo "...download new source packages..."
 +make -j 3 download
 +echo "...make the firmware..."
