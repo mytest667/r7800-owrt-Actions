@@ -22,58 +22,39 @@ on:
         default: 'false'
 
 env:
-  # 基础配置
   REPO_URL: https://github.com/mytest667/r7800-owrt.git
   REPO_BRANCH: main
-  # 仓库中的脚本/补丁文件（确保文件名与仓库中完全一致）
-  NEW_BUILD: R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
+  NEWBUILD: R7800-owrt2512-r32680-17d625c858-20260221-1251-newBuildroot.sh
   LUCI_PATH: R7800-owrt2512-r32680-17d625c858-20260221-1251-luci.patch
   OPENWRT_PATH: R7800-owrt2512-r32680-17d625c858-20260221-1251-openwrt.patch
   PACKAGES_PATH: R7800-owrt2512-r32680-17d625c858-20260221-1251-packages.patch
-  # 上传配置
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
-  UPLOAD_COWTRANSFER: false
-  UPLOAD_WETRANSFER: false
-  # 时区配置
   TZ: Asia/Shanghai
 
 jobs:
   build:
     runs-on: ubuntu-22.04
-    defaults:
-      run:
-        shell: bash
 
     steps:
-    # 1. 拉取仓库文件（核心：确保能访问到你的.sh脚本）
-    - name: Checkout repository files
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 1  # 拉取完整仓库文件
+    - name: Checkout
+      uses: actions/checkout@main
 
-    # 2. 初始化编译环境
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        # 清理系统冗余文件，释放空间
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
         sudo docker image prune --all --force
-        # 安装编译依赖
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
-        # 清理安装缓存
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
-        # 设置时区
         sudo timedatectl set-timezone "$TZ"
-        # 创建工作目录
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
 
-    # 3. 克隆OpenWrt源码
     - name: Clone source code
       working-directory: /workdir
       run: |
@@ -81,194 +62,111 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
-    # 4. 清空源码目录（保留你的原始逻辑，增加容错）
-    - name: Clear source code
+    - name: del source code
       run: |
-        cd $GITHUB_WORKSPACE/openwrt && rm -rf * || true
-
-    # 5. 执行仓库中的构建脚本（核心修复：解决文件引用问题）
-    - name: Run build script from repository
-      run: |
-        # 打印工作目录和文件列表（调试用，可保留）
-        echo "======================================"
-        echo "当前工作目录：$GITHUB_WORKSPACE"
-        echo "仓库文件列表："
-        ls -la $GITHUB_WORKSPACE
-        echo "======================================"
-        
-        # 定义脚本绝对路径（关键：精准定位仓库中的.sh文件）
-        BUILD_SCRIPT="$GITHUB_WORKSPACE/$NEW_BUILD"
-        
-        # 检查脚本是否存在
-        if [ ! -f "$BUILD_SCRIPT" ]; then
-          echo "❌ ERROR: 未找到构建脚本 $BUILD_SCRIPT"
-          echo "请检查："
-          echo "1. 仓库根目录是否存在该脚本文件（文件名大小写/后缀需完全一致）"
-          echo "2. checkout步骤是否正常拉取了仓库文件"
-          exit 1
-        fi
-        
-        # 给脚本添加可执行权限
-        chmod +x "$BUILD_SCRIPT"
-        
-        # 切换到openwrt目录执行脚本（确保输出到正确位置）
-        echo "✅ 找到脚本，开始执行..."
-        cd $GITHUB_WORKSPACE/openwrt
-        "$BUILD_SCRIPT"
-        
-        # 验证脚本执行结果
-        echo "======================================"
-        echo "脚本执行后openwrt目录内容："
-        ls -la $GITHUB_WORKSPACE/openwrt
-        echo "======================================"
-
-    # 6. SSH连接（用于调试）
+        cd openwrt && rm -f *
+    
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@v1.0.0
-      if: (github.event.inputs.ssh == 'true') || contains(github.event.action, 'ssh')
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
       env:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}        
 
-    # 7. 下载编译依赖包
-    - name: Download package dependencies
+    - name: Download package
       id: package
       run: |
-        # 检查脚本是否生成了owrt2512目录
-        OWRT_DIR="$GITHUB_WORKSPACE/openwrt/owrt2512"
-        if [ ! -d "$OWRT_DIR" ]; then
-          echo "❌ ERROR: 脚本执行后未生成 $OWRT_DIR 目录"
-          exit 1
-        fi
-        
-        cd "$OWRT_DIR"
+        cd owrt2512
         make defconfig
-        make download -j$(nproc)  # 自动适配CPU核心数
-        # 清理无效文件
+        make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
-    # 8. 编译固件（增加错误处理）
     - name: Compile the firmware
       id: compile
       run: |
-        OWRT_DIR="$GITHUB_WORKSPACE/openwrt/owrt2512"
-        cd "$OWRT_DIR"
-        
-        # 打印编译线程数
+        cd owrt2512
         echo -e "$(nproc) thread compile"
-        
-        # 执行更新脚本（容错处理）
-        if [ -f "hnscripts/updateNmake.sh" ]; then
-          chmod +x hnscripts/updateNmake.sh
-          hnscripts/updateNmake.sh || echo "⚠️ updateNmake.sh执行警告（非致命错误）"
-        fi
-        
-        # 核心编译命令：失败时单线程输出详细日志
-        make -j$(nproc) || make -j1 V=s
-        
-        # 设置编译状态和环境变量
+        hnscripts/updateNmake.sh
         echo "status=success" >> $GITHUB_OUTPUT
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
-    # 9. 检查磁盘空间
     - name: Check space usage
-      if: always()  # 无论前面步骤是否失败都执行
+      if: (!cancelled())
       run: df -hT
 
-    # 10. 上传bin目录（可选）
     - name: Upload bin directory
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@main
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
         name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: $GITHUB_WORKSPACE/openwrt/bin
+        path: openwrt/bin
 
-    # 11. 整理固件文件
-    - name: Organize firmware files
+    - name: Organize files
       id: organize
-      if: env.UPLOAD_FIRMWARE == 'true' && always()
+      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
-        # 自动查找固件输出目录
-        FIRMWARE_DIR=$(find $GITHUB_WORKSPACE/openwrt -path "*/bin/targets/*/*" -type d | head -n1)
-        if [ -z "$FIRMWARE_DIR" ]; then
-          echo "❌ ERROR: 未找到固件输出目录"
-          echo "status=failed" >> $GITHUB_OUTPUT
-          exit 1
-        fi
-        
-        cd "$FIRMWARE_DIR"
-        rm -rf packages  # 删除冗余包目录
-        echo "FIRMWARE=$FIRMWARE_DIR" >> $GITHUB_ENV
-        echo "status=success" >> $GITHUB_OUTPUT
+        cd openwrt/bin/targets/*/*
+        rm -rf packages
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
 
-    # 12. 上传固件目录
     - name: Upload firmware directory
-      uses: actions/upload-artifact@v4
-      if: steps.organize.outputs.status == 'success'
+      uses: actions/upload-artifact@main
+      if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
 
-    # 13. 上传到Cowtransfer（可选）
     - name: Upload firmware to cowtransfer
       id: cowtransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true'
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
       run: |
         curl -fsSL git.io/file-transfer | sh
         ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
         echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
-        echo "url=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_OUTPUT
+        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
 
-    # 14. 上传到WeTransfer（可选）
     - name: Upload firmware to WeTransfer
       id: wetransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true'
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
       run: |
         curl -fsSL git.io/file-transfer | sh
         ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
         echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
-        echo "url=$(cat wetransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_OUTPUT
+        echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
 
-    # 15. 生成Release标签
     - name: Generate release tag
       id: tag
-      if: env.UPLOAD_RELEASE == 'true' && always()
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        RELEASE_TAG=$(date +"%Y.%m.%d-%H%M")
-        echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
-        # 生成Release说明
+        echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
         touch release.txt
         [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
         [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
-        echo "status=success" >> $GITHUB_OUTPUT
+        echo "::set-output name=status::success"
 
-    # 16. 上传固件到Release
     - name: Upload firmware to release
-      uses: softprops/action-gh-release@v2
-      if: steps.tag.outputs.status == 'success'
+      uses: softprops/action-gh-release@v1
+      if: steps.tag.outputs.status == 'success' && !cancelled()
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
         files: ${{ env.FIRMWARE }}/*
-        draft: false
-        prerelease: false
 
-    # 17. 删除旧的Workflow运行记录
-    - name: Delete old workflow runs
-      uses: GitRML/delete-workflow-runs@v1.0.5
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
       with:
         retain_days: 1
         keep_minimum_runs: 3
 
-    # 18. 删除旧的Releases
     - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.2.1
-      if: env.UPLOAD_RELEASE == 'true'
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
         keep_latest: 3
         delete_tags: true
