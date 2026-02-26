@@ -70,6 +70,7 @@ jobs:
         mv feeds.conf.default owrt2512/feeds.conf.default
         cd owrt2512
         ./scripts/feeds update -a
+        ./scripts/feeds install -a -p kiddin9 -f
         ./scripts/feeds install -a
     
     - name: SSH connection to Actions
