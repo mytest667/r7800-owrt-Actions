@@ -189,6 +189,7 @@ index c28e51d2b2..948259267a 100644
 -src-git video https://github.com/openwrt/video.git;openwrt-25.12
 +#src-git telephony https://git.openwrt.org/feed/telephony.git;openwrt-25.12
 +#src-git video https://github.com/openwrt/video.git;openwrt-25.12
++#src-git kiddin9 https://github.com/kiddin9/kwrt-packages
 diff --git a/files/etc/Compile_info.txt b/files/etc/Compile_info.txt
 new file mode 100644
 index 0000000000..d592558ad3
