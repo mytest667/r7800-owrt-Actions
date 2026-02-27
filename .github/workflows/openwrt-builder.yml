@@ -72,6 +72,11 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a -p kiddin9 -f
         ./scripts/feeds install -a
+        
+    - name: del config
+      run: |
+        rm -f owrt2512/.config
+        mv .config owrt2512/.config
     
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@v1.0.0
