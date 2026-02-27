@@ -51,8 +51,7 @@ scripts/feeds update -a
 (cd feeds/luci;     patch -p1 -i ../../../$FILESTAMP-luci.patch)
 (cd feeds/packages; patch -p1 -i ../../../$FILESTAMP-packages.patch)
 #(cd feeds/routing;  patch -p1 -i ../../../$FILESTAMP-routing.patch)
-scripts/feeds update -i
-scripts/feeds install -a
+
 
 ### chmod known script files executable
 chmod -f 755 files/etc/*.sh
