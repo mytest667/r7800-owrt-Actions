@@ -47,7 +47,6 @@ ln -s ../dl dl
 ### update the feeds, apply patches to feeds
 ### re-create index to find new packages, finally install
 patch -p1 -i ../$FILESTAMP-openwrt.patch
-scripts/feeds update -a
 (cd feeds/luci;     patch -p1 -i ../../../$FILESTAMP-luci.patch)
 (cd feeds/packages; patch -p1 -i ../../../$FILESTAMP-packages.patch)
 (cd feeds/routing;  patch -p1 -i ../../../$FILESTAMP-routing.patch)
